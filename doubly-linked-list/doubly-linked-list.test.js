@@ -3,6 +3,7 @@ class Node {
         this.value = value;
         this.next = null;
         this.prev = null;
+        
     }
     getValue() {
         return this.value;
@@ -12,15 +13,16 @@ class DoubleLinkedList {
     constructor() {
         this.head = null;
         this.tail = null;
+        this.size = 0;
     }
 
     isEmpty() {
         return this.head == null;
     }
-    getFirst() {
+    getHead() {
         return this.head == null ? null : this.head.getValue();
     }
-    getLast() {
+    getTail() {
         return this.tail == null ? null : this.tail.getValue();
     }
 
@@ -35,6 +37,7 @@ class DoubleLinkedList {
             this.head.prev = newNode;
             this.head = newNode;
         }
+        this.size++;
     }
 
     append(value) {
@@ -48,6 +51,7 @@ class DoubleLinkedList {
             this.tail.next = newNode;
             this.tail = newNode
         }
+        this.size++;
     }
 
     contain(value) {
@@ -63,7 +67,7 @@ class DoubleLinkedList {
         let tmp = this.head;
         while (tmp != null) {
             if (tmp.value === value) {
-                if(tmp.prev == null && tmp.next == null){
+                if (tmp.prev == null && tmp.next == null) {
                     this.head = null;
                     this.tail = null;
                 } else if (tmp.prev == null) {
@@ -76,33 +80,40 @@ class DoubleLinkedList {
                     tmp.prev.next = tmp.next
                     tmp.next = null
                 }
+                this.size--;
                 return;
             }
             // 이동
             tmp = tmp.next;
         }
     }
+
     deleteHead() {
-        if(this.head != null){
-        this.head = this.head.next
-        if(this.head==null){
-            this.tail = null;
-        }
-        }
-    }
-    deleteTail() {
-        if(this.tail!=null){
-            if(this.tail == this.head) {
+        if (this.head != null) {
+            this.head = this.head.next
+            this.size--;
+            if (this.head == null) {
                 this.tail = null;
-                this.head = null;
-            }else{
-                this.tail = this.tail.prev;
-                this.tail.next = null;
             }
-            
         }
     }
 
+    deleteTail() {
+        if (this.tail != null) {
+            if (this.tail == this.head) {
+                this.tail = null;
+                this.head = null;
+            } else {
+                this.tail = this.tail.prev;
+                this.tail.next = null;
+            }
+            this.size--;
+        }
+    }
+
+    getSize() {
+        return this.size;
+    }
 }
 
 describe('DoublyLinkedList', () => {
@@ -111,42 +122,47 @@ describe('DoublyLinkedList', () => {
         expect(list).not.toBeNull();
         expect(list.isEmpty()).toBe(true);
     })
-  
+
     it('should give first node', () => {
         const list = new DoubleLinkedList();
         list.head = new Node(1)
-        expect(list.getFirst()).toBe(1);
+        expect(list.getHead()).toBe(1);
         list.head = new Node(2)
-        expect(list.getFirst()).toBe(2);
+        expect(list.getHead()).toBe(2);
     })
-    
+
     it('should give last node', () => {
         const list = new DoubleLinkedList();
         list.prepend(1);
-        expect(list.getLast()).toBe(1);
+        expect(list.getTail()).toBe(1);
+        expect(list.getSize()).toBe(1);
         list.prepend(2);
-        expect(list.getLast()).toBe(1);
+        expect(list.getTail()).toBe(1);
+        expect(list.getSize()).toBe(2);
     })
 
     it('should prepend node to linked list', () => {
         const list = new DoubleLinkedList();
         list.prepend(1);
-        expect(list.getFirst()).toBe(1);
+        expect(list.getHead()).toBe(1);
+        expect(list.getSize()).toBe(1);
         list.prepend(2);
-        expect(list.getFirst()).toBe(2);
+        expect(list.getHead()).toBe(2);
+        expect(list.getSize()).toBe(2);
         list.prepend(3);
-        expect(list.getFirst()).toBe(3);
+        expect(list.getHead()).toBe(3);
+        expect(list.getSize()).toBe(3);
 
     })
 
     it('should append node to linked list', () => {
         const list = new DoubleLinkedList();
         list.append(1);
-        expect(list.getLast()).toBe(1);
+        expect(list.getTail()).toBe(1);
         list.append(2);
-        expect(list.getLast()).toBe(2);
+        expect(list.getTail()).toBe(2);
         list.append(3);
-        expect(list.getLast()).toBe(3);
+        expect(list.getTail()).toBe(3);
     })
 
     it('should find node by value', () => {
@@ -165,33 +181,38 @@ describe('DoublyLinkedList', () => {
     })
 
     it('should delete node by value', () => {
-        
+
         const list = new DoubleLinkedList();
         list.prepend(1);
         list.delete(1);
-        expect(list.getFirst()).toBe(null);
-        expect(list.getLast()).toBe(null);
-        
+        expect(list.getHead()).toBe(null);
+        expect(list.getTail()).toBe(null);
+        expect(list.getSize()).toBe(0);
+
         list.prepend(1);
         list.prepend(2);
         list.delete(1);
-        expect(list.getFirst()).toBe(2);
-        expect(list.getLast()).toBe(2);
+        expect(list.getHead()).toBe(2);
+        expect(list.getTail()).toBe(2);
+        expect(list.getSize()).toBe(1);
         list.delete(2);
+        expect(list.getSize()).toBe(0);
 
         list.prepend(1);
         list.prepend(2);
         list.delete(2);
-        expect(list.getFirst()).toBe(1);
-        expect(list.getLast()).toBe(1);
+        expect(list.getHead()).toBe(1);
+        expect(list.getTail()).toBe(1);
         list.delete(1);
 
         list.prepend(1);
         list.prepend(2);
         list.prepend(3);
+        expect(list.getSize()).toBe(3);
         list.delete(2);
         expect(list.head.value).toBe(3);
         expect(list.head.next.value).toBe(1);
+        expect(list.getSize()).toBe(2);
 
     })
 
@@ -199,8 +220,8 @@ describe('DoublyLinkedList', () => {
 
         const list1 = new DoubleLinkedList();
         list1.deleteHead();
-        expect(list1.getFirst()).toBe(null);
-        expect(list1.getLast()).toBe(null);
+        expect(list1.getHead()).toBe(null);
+        expect(list1.getTail()).toBe(null);
 
         const list2 = new DoubleLinkedList();
         list2.prepend(1);
@@ -215,14 +236,17 @@ describe('DoublyLinkedList', () => {
         list3.prepend(1);
         list3.prepend(2);
         list3.prepend(3);
+        expect(list3.getSize()).toBe(3);
         expect(list3.head.value).toBe(3);
         expect(list3.head.next.value).toBe(2);
         expect(list3.head.next.next.value).toBe(1);
         list3.deleteHead();
+        expect(list3.getSize()).toBe(2);
         expect(list3.head.value).toBe(2);
         expect(list3.head.next.value).toBe(1);
         list3.deleteHead();
         expect(list3.head.value).toBe(1);
+        expect(list3.getSize()).toBe(1);
 
     })
 
@@ -230,8 +254,8 @@ describe('DoublyLinkedList', () => {
 
         const list1 = new DoubleLinkedList();
         list1.deleteTail();
-        expect(list1.getFirst()).toBe(null);
-        expect(list1.getLast()).toBe(null);
+        expect(list1.getHead()).toBe(null);
+        expect(list1.getTail()).toBe(null);
 
         const list2 = new DoubleLinkedList();
         list2.prepend(1);
