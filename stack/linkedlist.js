@@ -8,7 +8,7 @@ class Node {
         return this.value;
     }
 }
-class DoubleLinkedList {
+export default class DoubleLinkedList {
     constructor() {
         this.head = null;
         this.tail = null;
