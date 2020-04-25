@@ -34,6 +34,9 @@ const quickSort = (phoneBook) => {
 
 const binarySearch = (phoneBook,value, start = 0, end = phoneBook.length - 1) => {
     
+    if(start > end) {
+        return null;
+    }
     const sortedPhoneBook = quickSort(phoneBook);
 
     const middleIndex = Math.ceil((start + end)/2);
@@ -84,5 +87,10 @@ test('binarySearch', () => {
     expect(binarySearch(
         phoneBook, '6'))
         .toBe(5);
-        
-})
+    expect(binarySearch(
+        phoneBook, '7'))
+        .toBe(null);
+    expect(binarySearch(
+        phoneBook, '0'))
+        .toBe(null);
+});
