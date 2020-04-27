@@ -14,7 +14,7 @@
 class HashTable {
     constructor(size) {
         this.size = size;
-        this.buckets = Array(size).fill([]);
+        this.buckets = Array(size).fill(null).map(v => []);
     }
 
     hash(key) {
@@ -30,7 +30,8 @@ class HashTable {
             this.buckets[index].splice(this.buckets[index].findIndex((v) => key == v.key), 1);
         }
         
-        this.buckets[this.hash(key)].push({'key':key, 'value':value});
+        this.buckets[index].push({'key':key, 'value':value});
+
     }
 
     has(key) {
@@ -53,14 +54,11 @@ class HashTable {
         const index = this.hash(key);
 
         this.buckets[index].splice(this.buckets[index].findIndex((v) => key == v.key), 1);        
+        
     }
     
     getKeys() {
-        let keys = [];
-        this.buckets.forEach(bucket => {
-            keys = [...bucket.map(node => node.key)];
-        });
-        return keys;
+        return this.buckets.map(bucket => bucket.map(node => node.key)).reduce((acc, cur) => [...acc, ...cur], [])
     }
 }
 
@@ -143,7 +141,6 @@ describe('HashTable', () => {
 
     test('getKeys', () => {
         const hashTable = new HashTable(3);
-
         hashTable.set("a","강아지1");
         hashTable.set("b","강아지2");
         hashTable.set("c","강아지3");
@@ -152,7 +149,7 @@ describe('HashTable', () => {
         hashTable.set("f","강아지6");
         hashTable.set("g","강아지7");
         hashTable.set("h","강아지8");
-
-        expect(hashTable.getKeys().length).toBe(8);
+        hashTable.set("i","강아지9");
+        expect(hashTable.getKeys().length).toBe(9);
     })
 });
