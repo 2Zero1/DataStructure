@@ -54,6 +54,14 @@ class HashTable {
 
         this.buckets[index].splice(this.buckets[index].findIndex((v) => key == v.key), 1);        
     }
+    
+    getKeys() {
+        let keys = [];
+        this.buckets.forEach(bucket => {
+            keys = [...bucket.map(node => node.key)];
+        });
+        return keys;
+    }
 }
 
 describe('HashTable', () => {
@@ -132,4 +140,19 @@ describe('HashTable', () => {
         expect(hashTable.has('전우민')).toBeFalsy();
 
     });
+
+    test('getKeys', () => {
+        const hashTable = new HashTable(3);
+
+        hashTable.set("a","강아지1");
+        hashTable.set("b","강아지2");
+        hashTable.set("c","강아지3");
+        hashTable.set("d","강아지4");
+        hashTable.set("e","강아지5");
+        hashTable.set("f","강아지6");
+        hashTable.set("g","강아지7");
+        hashTable.set("h","강아지8");
+
+        expect(hashTable.getKeys().length).toBe(8);
+    })
 });
